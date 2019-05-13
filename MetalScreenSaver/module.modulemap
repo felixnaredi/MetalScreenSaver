@@ -1,0 +1,4 @@
+module MetalScreenSaver {
+    umbrella header "MetalScreenSaver.h"
+    export *
+}
