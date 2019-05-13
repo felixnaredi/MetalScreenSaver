@@ -43,6 +43,18 @@ static float matrixRadian2D(simd_float2x2 matrix)
     return acosf(p.x);
 }
 
+#define rotate(m, r) \
+    simd_mul(m, simd_matrix(simd_make_float2(cos(r), -sin(r)), \
+                               simd_make_float2(sin(r), cos(r))))
+
+static float float2_radian(simd_float2 vector)
+{
+    // vector = simd_normalize(vector);
+    if (vector.y < 0)
+        return 2 * M_PI - acosf(vector.x);
+    return acosf(vector.x);
+}
+
 static simd_float3 colorAtRadian(float radian)
 {
     float d = M_PI * 2 / 3;
@@ -57,6 +69,9 @@ static simd_float2x2 rotate2x2(const simd_float2x2 matrix, float radian)
                                         simd_make_float2(sin(radian), cos(radian))));
 }
 
+static simd_float2x2 float2x2_id()
+{ return simd_diagonal_matrix(simd_make_float2(1, 1)); }
+
 @implementation MSSRenderer
 {
     id<MTLDevice> _device;
@@ -67,6 +82,7 @@ static simd_float2x2 rotate2x2(const simd_float2x2 matrix, float radian)
     simd_float2x2 _scaleMatrix;
     simd_float2x2 _rotationMatrix;
     simd_float2x2 _colorMatrix;
+    simd_float2 _clockVector;
     simd_float2 _viewportSize;
     float _translationZ;
     float _r;
@@ -116,11 +132,11 @@ static simd_float2x2 rotate2x2(const simd_float2x2 matrix, float radian)
     
     _commandQueue = [_device newCommandQueue];
     
-    _scaleMatrix = simd_diagonal_matrix(simd_make_float2(1, 1));
+    _scaleMatrix = simd_diagonal_matrix(simd_make_float2(64, 64));
     _rotationMatrix = simd_diagonal_matrix(simd_make_float2(1, 1));
     _colorMatrix = simd_matrix(simd_make_float2(1, 0), simd_make_float2(0, 1));
+    _clockVector = rotate(simd_make_float2(1, 0), 2 * M_PI * (float)(time(NULL) % 3600) / 3600.0);
     _translationZ = 0;
-    _r = 0;
     return self;
 }
 
@@ -136,33 +152,37 @@ static simd_float2x2 rotate2x2(const simd_float2x2 matrix, float radian)
 {
     id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
     id<CAMetalDrawable> drawable = [layer nextDrawable];
+    float r = float2_radian(_clockVector);
     _renderPassDescriptor.colorAttachments[0].texture = _msaaTexture;
     _renderPassDescriptor.colorAttachments[0].resolveTexture = drawable.texture;
-    simd_float3 clearColor = colorAtRadian(matrixRadian2D(_colorMatrix));
-    
-    _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(clearColor.r / 12.8,
-                                                                             clearColor.g / 12.8,
-                                                                             clearColor.b / 12.8,
+    simd_float3 clearColor = colorAtRadian(r * 180);
+    _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(clearColor.r / 6.4,
+                                                                             clearColor.g / 6.4,
+                                                                             clearColor.b / 6.4,
                                                                              1);
+    // NSLog(@"r: %f", r);
     simd_float4x4 transformMatrix =
         simd_mul(
             simd_mul(
                 simd_matrix(
-                    simd_make_float4(1, 0, 0, cos(_r / 1.5)),
-                    simd_make_float4(0, 1, 0, sin(_r / 2.5)),
+                    simd_make_float4(1, 0, 0, 0),
+                    simd_make_float4(0, 1, 0, 0),
                     simd_make_float4(0, 0, 1, _translationZ),
                     simd_make_float4(0, 0, 0, 1)),
-                simd_matrix(
-                    simd_make_float4(
-                        _rotationMatrix.columns[0][0], _rotationMatrix.columns[1][0], 0, 0),
-                    simd_make_float4(
-                        _rotationMatrix.columns[0][1], _rotationMatrix.columns[1][1], 0, 0),
-                    simd_make_float4(0, 0, 1, 0),
-                    simd_make_float4(0, 0, 0, 1))),
-                simd_diagonal_matrix(simd_make_float4(_scaleMatrix.columns[0][0],
-                                                      _scaleMatrix.columns[1][1],
-                                                      1,
-                                                      1)));
+                simd_matrix(simd_make_float4(cos(r * 360), -sin(r * 360), 0, 0),
+                            simd_make_float4(sin(r * 360), cos(r * 360), 0, 0),
+                            simd_make_float4(0, 0, 1, 0),
+                            simd_make_float4(0, 0, 0, 1))),
+            simd_matrix(simd_make_float4(0.8 + sin(r * 240) / 5,
+                                         0,
+                                         0,
+                                         sin(r * 787) * cos(r * 1021)),
+                        simd_make_float4(0,
+                                         0.8 + sin(r * 240) / 5,
+                                         0,
+                                         sin(r * 1021) * cos(r * 787)),
+                        simd_make_float4(0, 0, 1, 0),
+                        simd_make_float4(0, 0, 0, 1)));
     
     id<MTLRenderCommandEncoder> renderEncoder =
         [commandBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
@@ -176,7 +196,7 @@ static simd_float2x2 rotate2x2(const simd_float2x2 matrix, float radian)
     
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
                       vertexStart:0
-                      vertexCount:kMSSTriangleCount * 3 + 24];
+                      vertexCount:kMSSTriangleCount * 3 + 12];
     [renderEncoder endEncoding];
     
     [commandBuffer presentDrawable:drawable];
@@ -184,9 +204,10 @@ static simd_float2x2 rotate2x2(const simd_float2x2 matrix, float radian)
     
     if ((_translationZ -= 1.0 / 60.0) < -2)
         _translationZ += 2;
-    _rotationMatrix = rotate2x2(_rotationMatrix, M_PI * 2 / 360 * 0.16);
-    _colorMatrix = rotate2x2(_colorMatrix, M_PI * 2.0 / 360.0);
-    _r += M_PI / 360;
+    _clockVector = simd_max(
+        simd_min(rotate(_clockVector, M_PI / 3600.0 / 60.0),
+                 simd_make_float2(1, 1)),
+        simd_make_float2(-1, -1));
 }
 
 @end

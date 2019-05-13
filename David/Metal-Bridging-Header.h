@@ -20,7 +20,7 @@ typedef enum {
     kMSSBufferIndexTransformMatrix
 } MSSBufferIndex;
 
-#define kMSSTriangleCount 16
+#define kMSSTriangleCount 8
 
 
 typedef struct __MSSTriangleDescriptor

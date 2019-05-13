@@ -73,7 +73,7 @@ namespace mss {
         }
         
         float4 color() const
-        { return float4(colorAtRadian(radian()), 1); }
+        { return float4(colorAtRadian(radian()), 0.64); }
         
         float4 position() const
         { return normalizedPosition(); }
@@ -106,8 +106,8 @@ namespace mss {
         static float4x4 perspectiveMatrix(float aspectRatio = 1)
         {
             float s = 1.0 / tan(kMSSPi / 6.0);
-            float n = 1.0 / kMSSTriangleCount;
-            float f = n + kMSSTriangleCount;
+            float n = 1.0 / (kMSSTriangleCount / 2);
+            float f = n + (kMSSTriangleCount / 1);
             return float4x4(float4 {aspectRatio * s, 0, 0, 0},
                             float4 {0, s, 0, 0},
                             float4 {0, 0, -(n + f) / (n - f), f * n / (n - f)},
@@ -130,4 +130,4 @@ vertexShader(uint vertexID [[vertex_id]],
 
 fragment float4
 fragmentShader(TriangleVertex::RasterizerData in [[stage_in]])
-{ return float4(in.color.rgb, sin(in.p.z / kMSSTriangleCount * 2 * kMSSPi)); }
+{ return float4(in.color.rgb, in.color.a * sin(in.p.z * kMSSPi / kMSSTriangleCount * 2)); }
