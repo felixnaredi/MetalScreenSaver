@@ -8,12 +8,13 @@
 #include <metal_stdlib>
 #include "Metal-Bridging-Header.h"
 
-#define kMSSPi 3.14159
 #define MSSMax(a, b) ((a) > (b) ? a : b)
 
 using namespace metal;
 
 namespace mss {
+    
+    constexpr constant float π = 3.14159265358979323846264338327950288;
     
     template <class T>
     T balancedAspectRatioMatrix(float2 size);
@@ -38,7 +39,7 @@ namespace mss {
     
     float3 colorAtRadian(float radian)
     {
-        float d = 2 * kMSSPi / 3;
+        float d = 2 * π / 3;
         return float3(cos(radian + d * 0) * (1 - (1.0/3.0)) + (1.0/3.0),
                       cos(radian + d * 1) * (1 - (1.0/3.0)) + (1.0/3.0),
                       cos(radian + d * 2) * (1 - (1.0/3.0)) + (1.0/3.0));
@@ -46,11 +47,6 @@ namespace mss {
     
     float aspectRatio(float2 size)
     { return size.y / size.x; }
-
-    struct RasterizerData {
-        float4 position [[position]];
-        float4 color;
-    };
     
     /// \class TriangleVertex
     ///
@@ -62,9 +58,9 @@ namespace mss {
         {}
         
         struct RasterizerData {
-            float4 position [[position]];
+            float4 fragmentPosition [[position]];
             float4 color;
-            float4 p;
+            float4 position;
         };
         
         const uint index;
@@ -72,7 +68,7 @@ namespace mss {
         float radian() const
         {
             if (normalizedPosition().y < 0)
-                return kMSSPi * 2 - acos(normalizedPosition().x);
+                return π * 2 - acos(normalizedPosition().x);
             return acos(normalizedPosition().x);
         }
         
@@ -82,12 +78,24 @@ namespace mss {
         float4 position() const
         { return normalizedPosition(); }
         
-        RasterizerData rasterizerData(float4x4 transform, float aspectRatio = 1) const {
+        RasterizerData rasterizerData(float4x4 transform = float4x4(1)) const {
+            float4 p = position() * transform;
             return (RasterizerData) {
-                .position = position() * transform * perspectiveMatrix(aspectRatio),
-                .color = color(),
-                .p = position() * transform * perspectiveMatrix(aspectRatio),
+                .fragmentPosition = p,
+                .position = p,
+                .color = color()
             };
+        }
+        
+        static float4x4 perspectiveMatrix(float aspectRatio = 1)
+        {
+            float s = 1.0 / tan(π / 6.0);
+            float n = 1.0 / (kMSSTriangleCount / 2);
+            float f = n + kMSSTriangleCount;
+            return float4x4(float4 {aspectRatio * s, 0, 0, 0},
+                            float4 {0, s, 0, 0},
+                            float4 {0, 0, -(n + f) / (n - f), f * n / (n - f)},
+                            float4 {0, 0, 1, 0});
         }
         
     private:
@@ -96,8 +104,8 @@ namespace mss {
         
         constexpr float4 normalizedPosition() const
         {
-            float d = 2 * kMSSPi / 4;
-            float offs = 2 * kMSSPi / 3.0 * float(index % 3);
+            float d = 2 * π / 4;
+            float offs = 2 * π / 3.0 * float(index % 3);
             switch ((index / 3) % 4) {
                 case 0: return float4(cos(offs + d * 0), sin(offs + d * 0), z(), 1);
                 case 1: return float4(cos(offs + d * 2), sin(offs + d * 2), z(), 1);
@@ -105,17 +113,6 @@ namespace mss {
                 case 3: return float4(cos(offs + d * 3), sin(offs + d * 3), z(), 1);
                 default: return float4(0);
             }
-        }
-        
-        static float4x4 perspectiveMatrix(float aspectRatio = 1)
-        {
-            float s = 1.0 / tan(kMSSPi / 6.0);
-            float n = 1.0 / (kMSSTriangleCount / 2);
-            float f = n + (kMSSTriangleCount / 1);
-            return float4x4(float4 {aspectRatio * s, 0, 0, 0},
-                            float4 {0, s, 0, 0},
-                            float4 {0, 0, -(n + f) / (n - f), f * n / (n - f)},
-                            float4 {0, 0, 1, 0});
         }
     };
 }
@@ -129,11 +126,12 @@ vertexShader(uint vertexID [[vertex_id]],
              constant float4x4& modelMatrix [[buffer(kMSSBufferIndexModelMatrix)]],
              constant float4x4& viewMatrix [[buffer(kMSSBufferIndexViewMatrix)]])
 {
-    auto v = TriangleVertex(vertexID).rasterizerData(modelMatrix, aspectRatio(viewportSize));
-    v.position *= viewMatrix;
-    return v;
+    return TriangleVertex(vertexID).rasterizerData(
+        modelMatrix *
+        TriangleVertex::perspectiveMatrix(aspectRatio(viewportSize)) *
+        viewMatrix);
 }
 
 fragment float4
 fragmentShader(TriangleVertex::RasterizerData in [[stage_in]])
-{ return float4(in.color.rgb, in.color.a * sin(in.p.z * kMSSPi / kMSSTriangleCount * 2)); }
+{ return float4(in.color.rgb, in.color.a * sin(in.position.z * π / kMSSTriangleCount * 2)); }
