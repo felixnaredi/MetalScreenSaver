@@ -16,6 +16,14 @@
 		0A7A71A5227F8DD5001149F2 /* libMetalScreenSaver.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A6E6121227F89610011490C /* libMetalScreenSaver.a */; settings = {ATTRIBUTES = (Required, ); }; };
 		0A7A71A8227F97FD001149F2 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0A7A71A7227F97FD001149F2 /* Shaders.metal */; };
 		0A7A71AB227F9A89001149F2 /* MSSView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A7A71AA227F9A89001149F2 /* MSSView.m */; };
+		0A7D4D57228A50ED00F3EA72 /* MSSMath.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D56228A50ED00F3EA72 /* MSSMath.c */; };
+		0A7D4D58228A50F100F3EA72 /* MSSMath.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D56228A50ED00F3EA72 /* MSSMath.c */; };
+		0A7D4D59228A50F100F3EA72 /* MSSMath.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D56228A50ED00F3EA72 /* MSSMath.c */; };
+		0A7D4D5C228A544600F3EA72 /* MSSClockVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A7D4D5A228A544600F3EA72 /* MSSClockVector.h */; };
+		0A7D4D5D228A544600F3EA72 /* MSSClockVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A7D4D5A228A544600F3EA72 /* MSSClockVector.h */; };
+		0A7D4D5E228A544600F3EA72 /* MSSClockVector.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D5B228A544600F3EA72 /* MSSClockVector.c */; };
+		0A7D4D5F228A544600F3EA72 /* MSSClockVector.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D5B228A544600F3EA72 /* MSSClockVector.c */; };
+		0A7D4D60228A544600F3EA72 /* MSSClockVector.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D5B228A544600F3EA72 /* MSSClockVector.c */; };
 		0A926BD82276F76D00674001 /* HelloScreenSaverView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A926BD72276F76D00674001 /* HelloScreenSaverView.h */; };
 		0A926BDA2276F76D00674001 /* HelloScreenSaverView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A926BD92276F76D00674001 /* HelloScreenSaverView.m */; };
 		0A926BF52276F9D000674001 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0A926BF42276F9D000674001 /* Shaders.metal */; };
@@ -46,6 +54,10 @@
 		0A7A71A7227F97FD001149F2 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		0A7A71A9227F9A89001149F2 /* MSSView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSSView.h; sourceTree = "<group>"; };
 		0A7A71AA227F9A89001149F2 /* MSSView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MSSView.m; sourceTree = "<group>"; };
+		0A7D4D54228A4D2C00F3EA72 /* MSSMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSSMath.h; sourceTree = "<group>"; };
+		0A7D4D56228A50ED00F3EA72 /* MSSMath.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MSSMath.c; sourceTree = "<group>"; };
+		0A7D4D5A228A544600F3EA72 /* MSSClockVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSSClockVector.h; sourceTree = "<group>"; };
+		0A7D4D5B228A544600F3EA72 /* MSSClockVector.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MSSClockVector.c; sourceTree = "<group>"; };
 		0A926BD52276F76D00674001 /* HelloScreenSaver.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HelloScreenSaver.saver; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A926BD72276F76D00674001 /* HelloScreenSaverView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HelloScreenSaverView.h; sourceTree = "<group>"; };
 		0A926BD92276F76D00674001 /* HelloScreenSaverView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HelloScreenSaverView.m; sourceTree = "<group>"; };
@@ -113,6 +125,10 @@
 				0A6E6123227F89610011490C /* MetalScreenSaver.h */,
 				0A6E6125227F89610011490C /* MetalScreenSaver.m */,
 				0A7A7191227F8B29001149F2 /* module.modulemap */,
+				0A7D4D54228A4D2C00F3EA72 /* MSSMath.h */,
+				0A7D4D56228A50ED00F3EA72 /* MSSMath.c */,
+				0A7D4D5A228A544600F3EA72 /* MSSClockVector.h */,
+				0A7D4D5B228A544600F3EA72 /* MSSClockVector.c */,
 			);
 			path = MetalScreenSaver;
 			sourceTree = "<group>";
@@ -179,6 +195,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A7D4D5C228A544600F3EA72 /* MSSClockVector.h in Headers */,
 				0A7A71A4227F8C81001149F2 /* MetalScreenSaver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -195,6 +212,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A7D4D5D228A544600F3EA72 /* MSSClockVector.h in Headers */,
 				0AD2D8BF228662340039A375 /* DavidView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -350,8 +368,10 @@
 				0A7A71A8227F97FD001149F2 /* Shaders.metal in Sources */,
 				0AD2D8C72286626E0039A375 /* MSSRenderer.m in Sources */,
 				0A6E6115227F83420011490C /* main.m in Sources */,
+				0A7D4D60228A544600F3EA72 /* MSSClockVector.c in Sources */,
 				0AD2D8C9228664B70039A375 /* MetalScreenSaver.m in Sources */,
 				0A6E610D227F83410011490C /* AppDelegate.m in Sources */,
+				0A7D4D58228A50F100F3EA72 /* MSSMath.c in Sources */,
 				0A7A71AB227F9A89001149F2 /* MSSView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -361,6 +381,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A6E6126227F89610011490C /* MetalScreenSaver.m in Sources */,
+				0A7D4D5E228A544600F3EA72 /* MSSClockVector.c in Sources */,
+				0A7D4D57228A50ED00F3EA72 /* MSSMath.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -377,6 +399,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A7D4D59228A50F100F3EA72 /* MSSMath.c in Sources */,
+				0A7D4D5F228A544600F3EA72 /* MSSClockVector.c in Sources */,
 				0AD2D8CA2286653F0039A375 /* Shaders.metal in Sources */,
 				0AD2D8C8228664B70039A375 /* MetalScreenSaver.m in Sources */,
 				0AD2D8C6228662530039A375 /* MSSRenderer.m in Sources */,

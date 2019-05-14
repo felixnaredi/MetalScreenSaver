@@ -12,22 +12,10 @@
 
 typedef enum {
     kMSSBufferIndexViewport = 0,
-    kMSSBufferIndexScaleMatrix,
-    kMSSBufferIndexRotationMatrix,
-    kMSSBufferIndexTriangleData,
-    kMSSBufferIndexFrameCounter,
-    kMSSBufferIndexStarDuration,
-    kMSSBufferIndexTransformMatrix
+    kMSSBufferIndexModelMatrix,
+    kMSSBufferIndexViewMatrix,
 } MSSBufferIndex;
 
-#define kMSSTriangleCount 8
-
-
-typedef struct __MSSTriangleDescriptor
-{
-    const matrix_float2x2 rotationMatrix;
-    const vector_float3 color;
-    float scale;
-} MSSTriangleDescriptor;
+#define kMSSTriangleCount 32
 
 #endif /* Metal_Bridging_Header_h */

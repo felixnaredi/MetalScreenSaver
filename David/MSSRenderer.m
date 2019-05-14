@@ -10,6 +10,8 @@
 @import QuartzCore;
 @import simd;
 #import "../MetalScreenSaver/MetalScreenSaver.h"
+#import "../MetalScreenSaver/MSSMath.h"
+#import "../MetalScreenSaver/MSSClockVector.h"
 
 #import <os/log.h>
 #import "Metal-Bridging-Header.h"
@@ -17,43 +19,6 @@
 
 #define kMSSTextureSampleCount 4
 
-static id<MTLTexture> MSSNewMSAATexture(_Nonnull id<MTLDevice> device,
-                                        NSUInteger width,
-                                        NSUInteger height)
-{
-    MTLTextureDescriptor *textureDescriptor =
-        [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
-                                                           width:width
-                                                          height:height
-                                                       mipmapped:false];
-    textureDescriptor.storageMode = MTLStorageModePrivate;
-    textureDescriptor.sampleCount = kMSSTextureSampleCount;
-    textureDescriptor.textureType = MTLTextureType2DMultisample;
-    textureDescriptor.usage = MTLTextureUsageRenderTarget;
-    return [device newTextureWithDescriptor:textureDescriptor];
-}
-
-static float matrixRadian2D(simd_float2x2 matrix)
-{
-    simd_float2 p = simd_max(simd_min(simd_mul(simd_make_float2(1, 0), matrix),
-                                      simd_make_float2(1, 1)),
-                             simd_make_float2(-1, -1));
-    if (p.y < 0)
-        return 2 * M_PI - acosf(p.x);
-    return acosf(p.x);
-}
-
-#define rotate(m, r) \
-    simd_mul(m, simd_matrix(simd_make_float2(cos(r), -sin(r)), \
-                               simd_make_float2(sin(r), cos(r))))
-
-static float float2_radian(simd_float2 vector)
-{
-    // vector = simd_normalize(vector);
-    if (vector.y < 0)
-        return 2 * M_PI - acosf(vector.x);
-    return acosf(vector.x);
-}
 
 static simd_float3 colorAtRadian(float radian)
 {
@@ -63,15 +28,6 @@ static simd_float3 colorAtRadian(float radian)
                             simd_max(0, cos(radian + d * 2) * (2.0/3.0) + (1.0/3.0)));
 }
 
-static simd_float2x2 rotate2x2(const simd_float2x2 matrix, float radian)
-{
-    return simd_mul(matrix, simd_matrix(simd_make_float2(cos(radian), -sin(radian)),
-                                        simd_make_float2(sin(radian), cos(radian))));
-}
-
-static simd_float2x2 float2x2_id()
-{ return simd_diagonal_matrix(simd_make_float2(1, 1)); }
-
 @implementation MSSRenderer
 {
     id<MTLDevice> _device;
@@ -79,13 +35,8 @@ static simd_float2x2 float2x2_id()
     id<MTLRenderPipelineState> _renderPipelineState;
     id<MTLTexture> _msaaTexture;
     MTLRenderPassDescriptor *_renderPassDescriptor;
-    simd_float2x2 _scaleMatrix;
-    simd_float2x2 _rotationMatrix;
-    simd_float2x2 _colorMatrix;
-    simd_float2 _clockVector;
     simd_float2 _viewportSize;
-    float _translationZ;
-    float _r;
+    MSSClockVector _clockVector;
 }
 
 - (id<MTLDevice>)getDevice
@@ -131,12 +82,7 @@ static simd_float2x2 float2x2_id()
     renderPassColorAttachment.storeAction = MTLStoreActionMultisampleResolve;
     
     _commandQueue = [_device newCommandQueue];
-    
-    _scaleMatrix = simd_diagonal_matrix(simd_make_float2(64, 64));
-    _rotationMatrix = simd_diagonal_matrix(simd_make_float2(1, 1));
-    _colorMatrix = simd_matrix(simd_make_float2(1, 0), simd_make_float2(0, 1));
-    _clockVector = rotate(simd_make_float2(1, 0), 2 * M_PI * (float)(time(NULL) % 3600) / 3600.0);
-    _translationZ = 0;
+    _clockVector = MSSClockVectorInitNow();
     return self;
 }
 
@@ -145,44 +91,54 @@ static simd_float2x2 float2x2_id()
     layer.drawableSize = size;
     [layer setNeedsDisplay];
     _viewportSize = simd_make_float2(size.width, size.height);
-    _msaaTexture = MSSNewMSAATexture(_device, size.width, size.height);
+    _msaaTexture = MSSNewMSAATexture(_device, size.width, size.height, kMSSTextureSampleCount);
 }
 
 - (void)displayLayer:(CAMetalLayer *)layer
 {
     id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
     id<CAMetalDrawable> drawable = [layer nextDrawable];
-    float r = float2_radian(_clockVector);
     _renderPassDescriptor.colorAttachments[0].texture = _msaaTexture;
     _renderPassDescriptor.colorAttachments[0].resolveTexture = drawable.texture;
-    simd_float3 clearColor = colorAtRadian(r * 180);
-    _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(clearColor.r / 6.4,
-                                                                             clearColor.g / 6.4,
-                                                                             clearColor.b / 6.4,
-                                                                             1);
-    // NSLog(@"r: %f", r);
+
+    float tA = MSSClockVectorRadianWithPeriod(_clockVector, 11.269427669);
+    float tB = MSSClockVectorRadianWithPeriod(_clockVector, 22.427661492);
+    float tZR = MSSClockVectorRadianWithPeriod(_clockVector, 2);
+    simd_float3 t = simd_make_float3(cos(sin(tA)) * sin(tB),
+                                     cos(sin(tB)) * sin(tA),
+                                     2 * cos(2.09 * (tZR / (M_PI * 4) + 0.5)) - 1);
+    float r = MSSClockVectorRadianWithPeriod(_clockVector, 7);
+    float zoom = 1 + sin(MSSClockVectorRadianWithPeriod(_clockVector, 17)) * 0.4;
+    
+    simd_float3 clearColor =
+        colorAtRadian(MSSRadian_float2(MSSRotate_float2(simd_normalize(t.xy), r)));
+    float luminosity = sqrt(t.x * t.x + t.y * t.y) * 0.1;
+    _renderPassDescriptor.colorAttachments[0].clearColor =
+        MTLClearColorMake(clearColor.r * luminosity,
+                          clearColor.g * luminosity,
+                          clearColor.b * luminosity,
+                          1);
+    
     simd_float4x4 transformMatrix =
         simd_mul(
             simd_mul(
-                simd_matrix(
-                    simd_make_float4(1, 0, 0, 0),
-                    simd_make_float4(0, 1, 0, 0),
-                    simd_make_float4(0, 0, 1, _translationZ),
-                    simd_make_float4(0, 0, 0, 1)),
-                simd_matrix(simd_make_float4(cos(r * 360), -sin(r * 360), 0, 0),
-                            simd_make_float4(sin(r * 360), cos(r * 360), 0, 0),
+                simd_matrix(simd_make_float4(1, 0, 0, 0),
+                            simd_make_float4(0, 1, 0, 0),
+                            simd_make_float4(0, 0, 1, t.z),
+                            simd_make_float4(0, 0, 0, 1)),
+                simd_matrix(simd_make_float4(cos(r), -sin(r), 0, 0),
+                            simd_make_float4(sin(r), cos(r), 0, 0),
                             simd_make_float4(0, 0, 1, 0),
                             simd_make_float4(0, 0, 0, 1))),
-            simd_matrix(simd_make_float4(0.8 + sin(r * 240) / 5,
-                                         0,
-                                         0,
-                                         sin(r * 787) * cos(r * 1021)),
-                        simd_make_float4(0,
-                                         0.8 + sin(r * 240) / 5,
-                                         0,
-                                         sin(r * 1021) * cos(r * 787)),
+            simd_matrix(simd_make_float4(zoom, 0, 0, t.x),
+                        simd_make_float4(0, zoom, 0, t.y),
                         simd_make_float4(0, 0, 1, 0),
                         simd_make_float4(0, 0, 0, 1)));
+    
+    simd_float4x4 viewMatrix = simd_matrix(simd_make_float4(1, 0, 0, -t.x),
+                                           simd_make_float4(0, 1, 0, -t.y),
+                                           simd_make_float4(0, 0, 1, 0),
+                                           simd_make_float4(0, 0, 0, 1));
     
     id<MTLRenderCommandEncoder> renderEncoder =
         [commandBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
@@ -192,7 +148,10 @@ static simd_float2x2 float2x2_id()
                           atIndex:kMSSBufferIndexViewport];
     [renderEncoder setVertexBytes:&transformMatrix
                            length:sizeof(transformMatrix)
-                          atIndex:kMSSBufferIndexTransformMatrix];
+                          atIndex:kMSSBufferIndexModelMatrix];
+    [renderEncoder setVertexBytes:&viewMatrix
+                           length:sizeof(viewMatrix)
+                          atIndex:kMSSBufferIndexViewMatrix];
     
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
                       vertexStart:0
@@ -202,12 +161,7 @@ static simd_float2x2 float2x2_id()
     [commandBuffer presentDrawable:drawable];
     [commandBuffer commit];
     
-    if ((_translationZ -= 1.0 / 60.0) < -2)
-        _translationZ += 2;
-    _clockVector = simd_max(
-        simd_min(rotate(_clockVector, M_PI / 3600.0 / 60.0),
-                 simd_make_float2(1, 1)),
-        simd_make_float2(-1, -1));
+    _clockVector = MSSClockVectorNext(_clockVector);
 }
 
 @end

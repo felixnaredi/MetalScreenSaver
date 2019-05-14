@@ -57,6 +57,10 @@ namespace mss {
     /// Gets properties for a single TriangleVertex given a certain index.
     struct TriangleVertex {
         
+        TriangleVertex(uint index)
+            : index(index)
+        {}
+        
         struct RasterizerData {
             float4 position [[position]];
             float4 color;
@@ -122,10 +126,12 @@ using namespace mss;
 vertex TriangleVertex::RasterizerData
 vertexShader(uint vertexID [[vertex_id]],
              constant float2& viewportSize [[buffer(kMSSBufferIndexViewport)]],
-             constant float4x4& transformMatrix [[buffer(kMSSBufferIndexTransformMatrix)]])
+             constant float4x4& modelMatrix [[buffer(kMSSBufferIndexModelMatrix)]],
+             constant float4x4& viewMatrix [[buffer(kMSSBufferIndexViewMatrix)]])
 {
-    return (TriangleVertex { .index = vertexID }).rasterizerData(transformMatrix,
-                                                                 aspectRatio(viewportSize));
+    auto v = TriangleVertex(vertexID).rasterizerData(modelMatrix, aspectRatio(viewportSize));
+    v.position *= viewMatrix;
+    return v;
 }
 
 fragment float4

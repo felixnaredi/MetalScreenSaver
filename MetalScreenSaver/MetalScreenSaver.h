@@ -8,11 +8,14 @@
 @import Foundation;
 @import Metal;
 
-
-FOUNDATION_EXPORT _Nullable id<MTLLibrary> MSSNewDefaultBundleLibrary(const id<MTLDevice> device,
+_Nullable id<MTLLibrary> MSSNewDefaultBundleLibrary(const id<MTLDevice> device,
                                                     char * _Nonnull bundleIdentifier);
 
-FOUNDATION_EXPORT _Nullable id<MTLRenderPipelineState>
+_Nullable id<MTLRenderPipelineState>
 MSSMakeRenderPipelineState(_Nonnull id<MTLDevice> device,
                            MTLRenderPipelineDescriptor * _Nonnull descriptor);
 
+id<MTLTexture> MSSNewMSAATexture(_Nonnull id<MTLDevice> device,
+                                 uint width,
+                                 uint height,
+                                 uint sampleCount);

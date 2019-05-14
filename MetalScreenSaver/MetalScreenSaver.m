@@ -48,3 +48,21 @@ MSSMakeRenderPipelineState(_Nonnull id<MTLDevice> device,
     }
     return renderState;
 }
+
+id<MTLTexture> MSSNewMSAATexture(_Nonnull id<MTLDevice> device,
+                                 uint width,
+                                 uint height,
+                                 uint sampleCount)
+{
+    MTLTextureDescriptor *textureDescriptor =
+    [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
+                                                       width:width
+                                                      height:height
+                                                   mipmapped:false];
+    textureDescriptor.storageMode = MTLStorageModePrivate;
+    textureDescriptor.sampleCount = sampleCount;
+    textureDescriptor.textureType = MTLTextureType2DMultisample;
+    textureDescriptor.usage = MTLTextureUsageRenderTarget;
+    return [device newTextureWithDescriptor:textureDescriptor];
+}
+
