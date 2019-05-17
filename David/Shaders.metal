@@ -5,8 +5,8 @@
 //  Created by Felix Naredi on 2019-05-06.
 //
 
-#include <metal_stdlib>
 #include "Metal-Bridging-Header.h"
+#include <metal_stdlib>
 
 #define MSSMax(a, b) ((a) > (b) ? a : b)
 
@@ -14,7 +14,7 @@ using namespace metal;
 
 namespace mss {
     
-    constexpr constant float π = 3.14159265358979323846264338327950288;
+    constexpr constant float π = M_PI_F;
     
     template <class T>
     T balancedAspectRatioMatrix(float2 size);
@@ -39,7 +39,7 @@ namespace mss {
     
     float3 colorAtRadian(float radian)
     {
-        float d = 2 * π / 3;
+        float d = 2 * M_PI_F / 3;
         return float3(cos(radian + d * 0) * (1 - (1.0/3.0)) + (1.0/3.0),
                       cos(radian + d * 1) * (1 - (1.0/3.0)) + (1.0/3.0),
                       cos(radian + d * 2) * (1 - (1.0/3.0)) + (1.0/3.0));

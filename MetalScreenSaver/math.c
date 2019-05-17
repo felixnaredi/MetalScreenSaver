@@ -1,21 +1,21 @@
 //
-//  MSSMath.c
+//  math.c
 //  MetalScreenSaver
 //
 //  Created by Felix Naredi on 2019-05-14.
 //
 
 #include <simd/simd.h>
-#include "MSSMath.h"
+#include "math.h"
 
-#define __MSSRotate(m, r) \
+#define __mss_rotate(m, r) \
     simd_mul(m, simd_matrix(simd_make_float2(cos(r), -sin(r)), \
     simd_make_float2(sin(r), cos(r))))
 
-simd_float2  MSSRotate_float2(simd_float2 vector, float radian)
-{ return __MSSRotate(vector, radian); }
+simd_float2  mss_rotate_float2(simd_float2 vector, float radian)
+{ return __mss_rotate(vector, radian); }
 
-float MSSRadian_float2(simd_float2 vector)
+float mss_radian_float2(simd_float2 vector)
 {
     if (vector.y < 0)
         return 2 * M_PI - acosf(vector.x);

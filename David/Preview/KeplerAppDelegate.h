@@ -7,7 +7,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>
+@interface KeplerAppDelegate : NSObject <NSApplicationDelegate>
 
 
 @end

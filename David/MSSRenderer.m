@@ -10,17 +10,17 @@
 @import QuartzCore;
 @import simd;
 #import "../MetalScreenSaver/MetalScreenSaver.h"
-#import "../MetalScreenSaver/MSSMath.h"
-#import "../MetalScreenSaver/MSSClockVector.h"
+#import "../MetalScreenSaver/math.h"
+#import "../MetalScreenSaver/clockvector.h"
 
-#import <os/log.h>
-#import "Metal-Bridging-Header.h"
 #import "MSSRenderer.h"
+#import "Metal-Bridging-Header.h"
+#import <os/log.h>
 
 #define kMSSTextureSampleCount 4
 
 
-static simd_float3 colorAtRadian(float radian)
+static simd_float3 mss_color_radian(float radian)
 {
     float d = M_PI * 2 / 3;
     return simd_make_float3(simd_max(0, cos(radian + d * 0) * (2.0/3.0) + (1.0/3.0)),
@@ -36,7 +36,7 @@ static simd_float3 colorAtRadian(float radian)
     id<MTLTexture> _msaaTexture;
     MTLRenderPassDescriptor *_renderPassDescriptor;
     simd_float2 _viewportSize;
-    MSSClockVector _clockVector;
+    mss_clockvector _clockVector;
 }
 
 - (id<MTLDevice>)getDevice
@@ -82,7 +82,7 @@ static simd_float3 colorAtRadian(float radian)
     renderPassColorAttachment.storeAction = MTLStoreActionMultisampleResolve;
     
     _commandQueue = [_device newCommandQueue];
-    _clockVector = MSSClockVectorInitNow();
+    _clockVector = mss_clockvector_init_now();
     return self;
 }
 
@@ -101,18 +101,18 @@ static simd_float3 colorAtRadian(float radian)
     _renderPassDescriptor.colorAttachments[0].texture = _msaaTexture;
     _renderPassDescriptor.colorAttachments[0].resolveTexture = drawable.texture;
 
-    float tA = MSSClockVectorRadianWithPeriod(_clockVector, 11.269427669);
-    float tB = MSSClockVectorRadianWithPeriod(_clockVector, 22.427661492);
-    float tZR = MSSClockVectorRadianWithPeriod(_clockVector, 2);
+    float tA = mss_clockvector_radian_with_period(_clockVector, 11.269427669);
+    float tB = mss_clockvector_radian_with_period(_clockVector, 22.427661492);
+    float tZR = mss_clockvector_radian_with_period(_clockVector, 1);
     simd_float3 t = simd_make_float3(cos(sin(tA)) * sin(tB),
                                      cos(sin(tB)) * sin(tA),
                                      2 * cos(2.09 * (tZR / (M_PI * 4) + 0.5)) - 1);
-    float r = MSSClockVectorRadianWithPeriod(_clockVector, 7);
-    float zoom = 1 + sin(MSSClockVectorRadianWithPeriod(_clockVector, 17)) * 0.4;
+    float r = mss_clockvector_radian_with_period(_clockVector, 7);
+    float zoom = 1 + sin(mss_clockvector_radian_with_period(_clockVector, 17)) * 0.4;
     
     simd_float3 clearColor =
-        colorAtRadian(MSSRadian_float2(MSSRotate_float2(simd_normalize(t.xy), r)));
-    float luminosity = sqrt(t.x * t.x + t.y * t.y) * 0.1;
+        mss_color_radian(mss_radian_float2(mss_rotate_float2(simd_normalize(t.xy), r)));
+    float luminosity = sqrt(t.x * t.x + t.y * t.y) * 0.3;
     _renderPassDescriptor.colorAttachments[0].clearColor =
         MTLClearColorMake(clearColor.r * luminosity,
                           clearColor.g * luminosity,
@@ -120,20 +120,18 @@ static simd_float3 colorAtRadian(float radian)
                           1);
     
     simd_float4x4 transformMatrix =
-        simd_mul(
-            simd_mul(
-                simd_matrix(simd_make_float4(1, 0, 0, 0),
-                            simd_make_float4(0, 1, 0, 0),
-                            simd_make_float4(0, 0, 1, t.z),
-                            simd_make_float4(0, 0, 0, 1)),
-                simd_matrix(simd_make_float4(cos(r), -sin(r), 0, 0),
-                            simd_make_float4(sin(r), cos(r), 0, 0),
-                            simd_make_float4(0, 0, 1, 0),
-                            simd_make_float4(0, 0, 0, 1))),
-            simd_matrix(simd_make_float4(zoom, 0, 0, t.x),
-                        simd_make_float4(0, zoom, 0, t.y),
-                        simd_make_float4(0, 0, 1, 0),
-                        simd_make_float4(0, 0, 0, 1)));
+        simd_mul(simd_matrix(simd_make_float4(1, 0, 0, 0),
+                             simd_make_float4(0, 1, 0, 0),
+                             simd_make_float4(0, 0, 1, t.z),
+                             simd_make_float4(0, 0, 0, 1)),
+                 simd_mul(simd_matrix(simd_make_float4(cos(r), -sin(r), 0, 0),
+                                      simd_make_float4(sin(r), cos(r), 0, 0),
+                                      simd_make_float4(0, 0, 1, 0),
+                                      simd_make_float4(0, 0, 0, 1)),
+                          simd_matrix(simd_make_float4(zoom, 0, 0, t.x),
+                                      simd_make_float4(0, zoom, 0, t.y),
+                                      simd_make_float4(0, 0, 1, 0),
+                                      simd_make_float4(0, 0, 0, 1))));
     
     simd_float4x4 viewMatrix = simd_matrix(simd_make_float4(1, 0, 0, -t.x),
                                            simd_make_float4(0, 1, 0, -t.y),
@@ -161,7 +159,7 @@ static simd_float3 colorAtRadian(float radian)
     [commandBuffer presentDrawable:drawable];
     [commandBuffer commit];
     
-    _clockVector = MSSClockVectorNext(_clockVector);
+    _clockVector = mss_clockvector_next(_clockVector);
 }
 
 @end

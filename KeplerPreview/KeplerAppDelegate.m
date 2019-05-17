@@ -1,22 +1,21 @@
 //
 //  AppDelegate.m
-//  IntersectPreview
+//  KeplerPreview
 //
-//  Created by Felix Naredi on 2019-05-05.
+//  Created by Felix Naredi on 2019-05-16.
 //
 
-#import "AppDelegate.h"
+#import "KeplerAppDelegate.h"
 
-@interface AppDelegate ()
+@interface KeplerAppDelegate ()
 
 @property (weak) IBOutlet NSWindow *window;
 @end
 
-@implementation AppDelegate
+@implementation KeplerAppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    CALayer *layer = _window.contentView.layer;
-    NSLog(@"layer: %@, delegate: %@", layer, layer.delegate);
+    // Insert code here to initialize your application
 }
 
 

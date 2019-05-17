@@ -7,23 +7,33 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0A6E610D227F83410011490C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A6E610C227F83410011490C /* AppDelegate.m */; };
+		0A6E610D227F83410011490C /* KeplerAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A6E610C227F83410011490C /* KeplerAppDelegate.m */; };
 		0A6E610F227F83420011490C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A6E610E227F83420011490C /* Assets.xcassets */; };
 		0A6E6112227F83420011490C /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A6E6110227F83420011490C /* MainMenu.xib */; };
 		0A6E6115227F83420011490C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A6E6114227F83420011490C /* main.m */; };
 		0A6E6126227F89610011490C /* MetalScreenSaver.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A6E6125227F89610011490C /* MetalScreenSaver.m */; };
+		0A71BD18228D925000FBC56A /* KeplerAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A71BD17228D925000FBC56A /* KeplerAppDelegate.m */; };
+		0A71BD1A228D925100FBC56A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A71BD19228D925100FBC56A /* Assets.xcassets */; };
+		0A71BD1D228D925100FBC56A /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A71BD1B228D925100FBC56A /* MainMenu.xib */; };
+		0A71BD20228D925100FBC56A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A71BD1F228D925100FBC56A /* main.m */; };
+		0A71BD27228D928400FBC56A /* KeplerRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A71BD26228D928400FBC56A /* KeplerRenderer.m */; };
+		0A71BD2A228D92A100FBC56A /* KeplerPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A71BD29228D92A100FBC56A /* KeplerPreviewView.m */; };
+		0A71BD31228E806D00FBC56A /* metal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A71BD2F228E806D00FBC56A /* metal.h */; };
+		0A71BD32228E806D00FBC56A /* metal.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A71BD30228E806D00FBC56A /* metal.m */; };
+		0A71BD33228E811500FBC56A /* metal.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A71BD30228E806D00FBC56A /* metal.m */; };
+		0A71BD35228E878300FBC56A /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0A71BD34228E878300FBC56A /* Shaders.metal */; };
 		0A7A71A4227F8C81001149F2 /* MetalScreenSaver.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A6E6123227F89610011490C /* MetalScreenSaver.h */; };
 		0A7A71A5227F8DD5001149F2 /* libMetalScreenSaver.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A6E6121227F89610011490C /* libMetalScreenSaver.a */; settings = {ATTRIBUTES = (Required, ); }; };
 		0A7A71A8227F97FD001149F2 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0A7A71A7227F97FD001149F2 /* Shaders.metal */; };
 		0A7A71AB227F9A89001149F2 /* MSSView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A7A71AA227F9A89001149F2 /* MSSView.m */; };
-		0A7D4D57228A50ED00F3EA72 /* MSSMath.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D56228A50ED00F3EA72 /* MSSMath.c */; };
-		0A7D4D58228A50F100F3EA72 /* MSSMath.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D56228A50ED00F3EA72 /* MSSMath.c */; };
-		0A7D4D59228A50F100F3EA72 /* MSSMath.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D56228A50ED00F3EA72 /* MSSMath.c */; };
-		0A7D4D5C228A544600F3EA72 /* MSSClockVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A7D4D5A228A544600F3EA72 /* MSSClockVector.h */; };
-		0A7D4D5D228A544600F3EA72 /* MSSClockVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A7D4D5A228A544600F3EA72 /* MSSClockVector.h */; };
-		0A7D4D5E228A544600F3EA72 /* MSSClockVector.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D5B228A544600F3EA72 /* MSSClockVector.c */; };
-		0A7D4D5F228A544600F3EA72 /* MSSClockVector.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D5B228A544600F3EA72 /* MSSClockVector.c */; };
-		0A7D4D60228A544600F3EA72 /* MSSClockVector.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D5B228A544600F3EA72 /* MSSClockVector.c */; };
+		0A7D4D57228A50ED00F3EA72 /* math.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D56228A50ED00F3EA72 /* math.c */; };
+		0A7D4D58228A50F100F3EA72 /* math.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D56228A50ED00F3EA72 /* math.c */; };
+		0A7D4D59228A50F100F3EA72 /* math.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D56228A50ED00F3EA72 /* math.c */; };
+		0A7D4D5C228A544600F3EA72 /* clockvector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A7D4D5A228A544600F3EA72 /* clockvector.h */; };
+		0A7D4D5D228A544600F3EA72 /* clockvector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A7D4D5A228A544600F3EA72 /* clockvector.h */; };
+		0A7D4D5E228A544600F3EA72 /* clockvector.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D5B228A544600F3EA72 /* clockvector.c */; };
+		0A7D4D5F228A544600F3EA72 /* clockvector.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D5B228A544600F3EA72 /* clockvector.c */; };
+		0A7D4D60228A544600F3EA72 /* clockvector.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D4D5B228A544600F3EA72 /* clockvector.c */; };
 		0A926BD82276F76D00674001 /* HelloScreenSaverView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A926BD72276F76D00674001 /* HelloScreenSaverView.h */; };
 		0A926BDA2276F76D00674001 /* HelloScreenSaverView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A926BD92276F76D00674001 /* HelloScreenSaverView.m */; };
 		0A926BF52276F9D000674001 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0A926BF42276F9D000674001 /* Shaders.metal */; };
@@ -38,8 +48,8 @@
 
 /* Begin PBXFileReference section */
 		0A6E6109227F83410011490C /* DavidPreview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DavidPreview.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		0A6E610B227F83410011490C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		0A6E610C227F83410011490C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		0A6E610B227F83410011490C /* KeplerAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeplerAppDelegate.h; sourceTree = "<group>"; };
+		0A6E610C227F83410011490C /* KeplerAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeplerAppDelegate.m; sourceTree = "<group>"; };
 		0A6E610E227F83420011490C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A6E6111227F83420011490C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		0A6E6113227F83420011490C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -50,14 +60,30 @@
 		0A6E6121227F89610011490C /* libMetalScreenSaver.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMetalScreenSaver.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A6E6123227F89610011490C /* MetalScreenSaver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetalScreenSaver.h; sourceTree = "<group>"; };
 		0A6E6125227F89610011490C /* MetalScreenSaver.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MetalScreenSaver.m; sourceTree = "<group>"; };
+		0A71BD14228D925000FBC56A /* KeplerPreview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeplerPreview.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A71BD16228D925000FBC56A /* KeplerAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeplerAppDelegate.h; sourceTree = "<group>"; };
+		0A71BD17228D925000FBC56A /* KeplerAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeplerAppDelegate.m; sourceTree = "<group>"; };
+		0A71BD19228D925100FBC56A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0A71BD1C228D925100FBC56A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		0A71BD1E228D925100FBC56A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0A71BD1F228D925100FBC56A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		0A71BD21228D925100FBC56A /* KeplerPreview.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeplerPreview.entitlements; sourceTree = "<group>"; };
+		0A71BD25228D928400FBC56A /* KeplerRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeplerRenderer.h; sourceTree = "<group>"; };
+		0A71BD26228D928400FBC56A /* KeplerRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeplerRenderer.m; sourceTree = "<group>"; };
+		0A71BD28228D92A100FBC56A /* KeplerPreviewView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeplerPreviewView.h; sourceTree = "<group>"; };
+		0A71BD29228D92A100FBC56A /* KeplerPreviewView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeplerPreviewView.m; sourceTree = "<group>"; };
+		0A71BD2B228D9AC100FBC56A /* Metal-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Metal-Bridging-Header.h"; sourceTree = "<group>"; };
+		0A71BD2F228E806D00FBC56A /* metal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = metal.h; sourceTree = "<group>"; };
+		0A71BD30228E806D00FBC56A /* metal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = metal.m; sourceTree = "<group>"; };
+		0A71BD34228E878300FBC56A /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		0A7A7191227F8B29001149F2 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		0A7A71A7227F97FD001149F2 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		0A7A71A9227F9A89001149F2 /* MSSView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSSView.h; sourceTree = "<group>"; };
 		0A7A71AA227F9A89001149F2 /* MSSView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MSSView.m; sourceTree = "<group>"; };
-		0A7D4D54228A4D2C00F3EA72 /* MSSMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSSMath.h; sourceTree = "<group>"; };
-		0A7D4D56228A50ED00F3EA72 /* MSSMath.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MSSMath.c; sourceTree = "<group>"; };
-		0A7D4D5A228A544600F3EA72 /* MSSClockVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSSClockVector.h; sourceTree = "<group>"; };
-		0A7D4D5B228A544600F3EA72 /* MSSClockVector.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MSSClockVector.c; sourceTree = "<group>"; };
+		0A7D4D54228A4D2C00F3EA72 /* math.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = math.h; sourceTree = "<group>"; };
+		0A7D4D56228A50ED00F3EA72 /* math.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = math.c; sourceTree = "<group>"; };
+		0A7D4D5A228A544600F3EA72 /* clockvector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = clockvector.h; sourceTree = "<group>"; };
+		0A7D4D5B228A544600F3EA72 /* clockvector.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = clockvector.c; sourceTree = "<group>"; };
 		0A926BD52276F76D00674001 /* HelloScreenSaver.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HelloScreenSaver.saver; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A926BD72276F76D00674001 /* HelloScreenSaverView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HelloScreenSaverView.h; sourceTree = "<group>"; };
 		0A926BD92276F76D00674001 /* HelloScreenSaverView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HelloScreenSaverView.m; sourceTree = "<group>"; };
@@ -86,6 +112,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0A71BD11228D925000FBC56A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0A926BD22276F76D00674001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -106,8 +139,8 @@
 		0A6E610A227F83410011490C /* Preview */ = {
 			isa = PBXGroup;
 			children = (
-				0A6E610B227F83410011490C /* AppDelegate.h */,
-				0A6E610C227F83410011490C /* AppDelegate.m */,
+				0A6E610B227F83410011490C /* KeplerAppDelegate.h */,
+				0A6E610C227F83410011490C /* KeplerAppDelegate.m */,
 				0A7A71A9227F9A89001149F2 /* MSSView.h */,
 				0A7A71AA227F9A89001149F2 /* MSSView.m */,
 				0A6E610E227F83420011490C /* Assets.xcassets */,
@@ -125,10 +158,12 @@
 				0A6E6123227F89610011490C /* MetalScreenSaver.h */,
 				0A6E6125227F89610011490C /* MetalScreenSaver.m */,
 				0A7A7191227F8B29001149F2 /* module.modulemap */,
-				0A7D4D54228A4D2C00F3EA72 /* MSSMath.h */,
-				0A7D4D56228A50ED00F3EA72 /* MSSMath.c */,
-				0A7D4D5A228A544600F3EA72 /* MSSClockVector.h */,
-				0A7D4D5B228A544600F3EA72 /* MSSClockVector.c */,
+				0A7D4D5A228A544600F3EA72 /* clockvector.h */,
+				0A7D4D5B228A544600F3EA72 /* clockvector.c */,
+				0A7D4D54228A4D2C00F3EA72 /* math.h */,
+				0A7D4D56228A50ED00F3EA72 /* math.c */,
+				0A71BD2F228E806D00FBC56A /* metal.h */,
+				0A71BD30228E806D00FBC56A /* metal.m */,
 			);
 			path = MetalScreenSaver;
 			sourceTree = "<group>";
@@ -140,12 +175,33 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		0A71BD15228D925000FBC56A /* KeplerPreview */ = {
+			isa = PBXGroup;
+			children = (
+				0A71BD16228D925000FBC56A /* KeplerAppDelegate.h */,
+				0A71BD17228D925000FBC56A /* KeplerAppDelegate.m */,
+				0A71BD28228D92A100FBC56A /* KeplerPreviewView.h */,
+				0A71BD29228D92A100FBC56A /* KeplerPreviewView.m */,
+				0A71BD25228D928400FBC56A /* KeplerRenderer.h */,
+				0A71BD26228D928400FBC56A /* KeplerRenderer.m */,
+				0A71BD2B228D9AC100FBC56A /* Metal-Bridging-Header.h */,
+				0A71BD34228E878300FBC56A /* Shaders.metal */,
+				0A71BD19228D925100FBC56A /* Assets.xcassets */,
+				0A71BD1B228D925100FBC56A /* MainMenu.xib */,
+				0A71BD1E228D925100FBC56A /* Info.plist */,
+				0A71BD1F228D925100FBC56A /* main.m */,
+				0A71BD21228D925100FBC56A /* KeplerPreview.entitlements */,
+			);
+			path = KeplerPreview;
+			sourceTree = "<group>";
+		};
 		0A926BA82276788A00674001 = {
 			isa = PBXGroup;
 			children = (
 				0A6E6122227F89610011490C /* MetalScreenSaver */,
 				0A926BD62276F76D00674001 /* HelloScreenSaver */,
 				0AD2D8BD228662340039A375 /* David */,
+				0A71BD15228D925000FBC56A /* KeplerPreview */,
 				0A926BB5227678A600674001 /* Products */,
 				0A6E612A227F89F10011490C /* Frameworks */,
 			);
@@ -158,6 +214,7 @@
 				0A6E6109227F83410011490C /* DavidPreview.app */,
 				0A6E6121227F89610011490C /* libMetalScreenSaver.a */,
 				0AD2D8BC228662340039A375 /* David.saver */,
+				0A71BD14228D925000FBC56A /* KeplerPreview.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -195,7 +252,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A7D4D5C228A544600F3EA72 /* MSSClockVector.h in Headers */,
+				0A71BD31228E806D00FBC56A /* metal.h in Headers */,
+				0A7D4D5C228A544600F3EA72 /* clockvector.h in Headers */,
 				0A7A71A4227F8C81001149F2 /* MetalScreenSaver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -212,7 +270,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A7D4D5D228A544600F3EA72 /* MSSClockVector.h in Headers */,
+				0A7D4D5D228A544600F3EA72 /* clockvector.h in Headers */,
 				0AD2D8BF228662340039A375 /* DavidView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -253,6 +311,23 @@
 			productName = MetalScreenSaver;
 			productReference = 0A6E6121227F89610011490C /* libMetalScreenSaver.a */;
 			productType = "com.apple.product-type.library.static";
+		};
+		0A71BD13228D925000FBC56A /* KeplerPreview */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0A71BD24228D925100FBC56A /* Build configuration list for PBXNativeTarget "KeplerPreview" */;
+			buildPhases = (
+				0A71BD10228D925000FBC56A /* Sources */,
+				0A71BD11228D925000FBC56A /* Frameworks */,
+				0A71BD12228D925000FBC56A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KeplerPreview;
+			productName = KeplerPreview;
+			productReference = 0A71BD14228D925000FBC56A /* KeplerPreview.app */;
+			productType = "com.apple.product-type.application";
 		};
 		0A926BD42276F76D00674001 /* HelloScreenSaver */ = {
 			isa = PBXNativeTarget;
@@ -305,6 +380,9 @@
 					0A6E6120227F89610011490C = {
 						CreatedOnToolsVersion = 10.1;
 					};
+					0A71BD13228D925000FBC56A = {
+						CreatedOnToolsVersion = 10.1;
+					};
 					0A926BD42276F76D00674001 = {
 						CreatedOnToolsVersion = 10.1;
 					};
@@ -330,6 +408,7 @@
 				0A926BD42276F76D00674001 /* HelloScreenSaver */,
 				0AD2D8BB228662340039A375 /* David */,
 				0A6E6108227F83410011490C /* DavidPreview */,
+				0A71BD13228D925000FBC56A /* KeplerPreview */,
 			);
 		};
 /* End PBXProject section */
@@ -341,6 +420,15 @@
 			files = (
 				0A6E610F227F83420011490C /* Assets.xcassets in Resources */,
 				0A6E6112227F83420011490C /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0A71BD12228D925000FBC56A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A71BD1A228D925100FBC56A /* Assets.xcassets in Resources */,
+				0A71BD1D228D925100FBC56A /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,10 +456,10 @@
 				0A7A71A8227F97FD001149F2 /* Shaders.metal in Sources */,
 				0AD2D8C72286626E0039A375 /* MSSRenderer.m in Sources */,
 				0A6E6115227F83420011490C /* main.m in Sources */,
-				0A7D4D60228A544600F3EA72 /* MSSClockVector.c in Sources */,
+				0A7D4D60228A544600F3EA72 /* clockvector.c in Sources */,
 				0AD2D8C9228664B70039A375 /* MetalScreenSaver.m in Sources */,
-				0A6E610D227F83410011490C /* AppDelegate.m in Sources */,
-				0A7D4D58228A50F100F3EA72 /* MSSMath.c in Sources */,
+				0A6E610D227F83410011490C /* KeplerAppDelegate.m in Sources */,
+				0A7D4D58228A50F100F3EA72 /* math.c in Sources */,
 				0A7A71AB227F9A89001149F2 /* MSSView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -381,8 +469,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A6E6126227F89610011490C /* MetalScreenSaver.m in Sources */,
-				0A7D4D5E228A544600F3EA72 /* MSSClockVector.c in Sources */,
-				0A7D4D57228A50ED00F3EA72 /* MSSMath.c in Sources */,
+				0A7D4D5E228A544600F3EA72 /* clockvector.c in Sources */,
+				0A7D4D57228A50ED00F3EA72 /* math.c in Sources */,
+				0A71BD32228E806D00FBC56A /* metal.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0A71BD10228D925000FBC56A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A71BD35228E878300FBC56A /* Shaders.metal in Sources */,
+				0A71BD20228D925100FBC56A /* main.m in Sources */,
+				0A71BD18228D925000FBC56A /* KeplerAppDelegate.m in Sources */,
+				0A71BD33228E811500FBC56A /* metal.m in Sources */,
+				0A71BD2A228D92A100FBC56A /* KeplerPreviewView.m in Sources */,
+				0A71BD27228D928400FBC56A /* KeplerRenderer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -399,8 +501,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A7D4D59228A50F100F3EA72 /* MSSMath.c in Sources */,
-				0A7D4D5F228A544600F3EA72 /* MSSClockVector.c in Sources */,
+				0A7D4D59228A50F100F3EA72 /* math.c in Sources */,
+				0A7D4D5F228A544600F3EA72 /* clockvector.c in Sources */,
 				0AD2D8CA2286653F0039A375 /* Shaders.metal in Sources */,
 				0AD2D8C8228664B70039A375 /* MetalScreenSaver.m in Sources */,
 				0AD2D8C6228662530039A375 /* MSSRenderer.m in Sources */,
@@ -415,6 +517,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				0A6E6111227F83420011490C /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		0A71BD1B228D925100FBC56A /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0A71BD1C228D925100FBC56A /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -677,6 +787,140 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		0A71BD22228D925100FBC56A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = KeplerPreview/KeplerPreview.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"MSS_BUNDLE_IDENTIFIER=\\\"$(PRODUCT_BUNDLE_IDENTIFIER)\\\"",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = KeplerPreview/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.felixnaredi.KeplerPreview;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		0A71BD23228D925100FBC56A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = KeplerPreview/KeplerPreview.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = KeplerPreview/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.felixnaredi.KeplerPreview;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -959,6 +1203,15 @@
 			buildConfigurations = (
 				0A6E6128227F89610011490C /* Debug */,
 				0A6E6129227F89610011490C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0A71BD24228D925100FBC56A /* Build configuration list for PBXNativeTarget "KeplerPreview" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A71BD22228D925100FBC56A /* Debug */,
+				0A71BD23228D925100FBC56A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
