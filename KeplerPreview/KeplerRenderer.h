@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, getter=getDevice) id<MTLDevice> device;
 
 - (void)displayMetalLayer:(CAMetalLayer *)layer;
+- (void)metalLayerDidResize:(CAMetalLayer *)layer;
 
 @end
 

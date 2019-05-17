@@ -22,4 +22,8 @@ id<MTLTexture> mss_make_msaa_texture(_Nonnull id<MTLDevice> device,
                                      uint height,
                                      uint sampleCount);
 
+void mss_clear_texture(id<MTLDevice> device,
+                       id<MTLCommandBuffer> commandBuffer,
+                       id<MTLTexture> texture);
+
 #endif /* metal_h */

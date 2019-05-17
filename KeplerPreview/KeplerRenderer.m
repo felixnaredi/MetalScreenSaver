@@ -13,14 +13,13 @@
 #import "../MetalScreenSaver/metal.h"
 #import <os/log.h>
 
-
 /// Renders a circle (n-sided polygon) into a texture and returns it.
-static _Nullable id<MTLTexture> __circle_texture(_Nonnull id<MTLDevice> device,
-                                                 _Nonnull id<MTLLibrary> library,
-                                                 _Nonnull id<MTLCommandBuffer> commandBuffer,
-                                                 uint width,
-                                                 uint height,
-                                                 uint sides)
+static _Nullable id<MTLTexture> __make_circle_texture(_Nonnull id<MTLDevice> device,
+                                                      _Nonnull id<MTLLibrary> library,
+                                                      _Nonnull id<MTLCommandBuffer> commandBuffer,
+                                                      uint width,
+                                                      uint height,
+                                                      uint sides)
 {
     MTLTextureDescriptor *textureDescriptor =
         [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
@@ -58,11 +57,21 @@ static _Nullable id<MTLTexture> __circle_texture(_Nonnull id<MTLDevice> device,
 @implementation KeplerRenderer
 {
     id<MTLDevice> _device;
+    id<MTLLibrary> _library;
     id<MTLCommandQueue> _commandQueue;
     id<MTLTexture> _circleTexture;
+    id<MTLTexture> _renderDestinationTexture;
+    id<MTLTexture> _displayTexture;
+    id<MTLComputePipelineState> _fadeOutComputePipeline;
     id<MTLRenderPipelineState> _quadTextureRenderPipeline;
+    id<MTLRenderPipelineState> _orbitRenderPipeline;
     MTLRenderPassDescriptor *_renderPassDescriptor;
+    uint _fadeTextureIndex;
+    mss_orbit _orbits[16];
 }
+
+- (nonnull id<MTLDevice>)getDevice
+{ return _device; }
 
 - (nullable id)init
 {
@@ -72,15 +81,28 @@ static _Nullable id<MTLTexture> __circle_texture(_Nonnull id<MTLDevice> device,
     }
     _commandQueue = [_device newCommandQueue];
     
-    id<MTLLibrary> library = mss_bundle_default_metallib(_device, MSS_BUNDLE_IDENTIFIER);
+    _library = mss_bundle_default_metallib(_device, MSS_BUNDLE_IDENTIFIER);
+    id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
+    
+    // Create pipeline state that "fades a texture out".
+    NSError *error;
+    _fadeOutComputePipeline =
+        [_device
+         newComputePipelineStateWithFunction:[_library
+                                              newFunctionWithName:@"kernel_fade_out_append_frame"]
+                                       error:&error];
+    if (!_fadeOutComputePipeline) {
+        os_log_error(OS_LOG_DEFAULT, "Failed to create render pipeline state, %@", error);
+        return NULL;
+    }
     
     // Make a texture of a circle that will be used for rendering later.
-    if (!(_circleTexture = __circle_texture(_device,
-                                            library,
-                                            [_commandQueue commandBuffer],
-                                            512,
-                                            512,
-                                            kMSSCircleTextureSideCount))) {
+    if (!(_circleTexture = __make_circle_texture(_device,
+                                                 _library,
+                                                 commandBuffer,
+                                                 512,
+                                                 512,
+                                                 kMSSCircleTextureSideCount))) {
         return NULL;
     }
     
@@ -88,9 +110,10 @@ static _Nullable id<MTLTexture> __circle_texture(_Nonnull id<MTLDevice> device,
     // covered by the circle texture that was created above.
     MTLRenderPipelineDescriptor *pipelineDescriptor = [MTLRenderPipelineDescriptor new];
     pipelineDescriptor.label = @"MSSQuadTexturePipelineDescriptor";
-    pipelineDescriptor.vertexFunction = [library newFunctionWithName:@"vertex_render_texture_quad"];
+    pipelineDescriptor.vertexFunction =
+        [_library newFunctionWithName:@"vertex_render_texture_quad"];
     pipelineDescriptor.fragmentFunction =
-        [library newFunctionWithName:@"fragment_render_texture_quad"];
+        [_library newFunctionWithName:@"fragment_render_texture_quad"];
     pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
     pipelineDescriptor.colorAttachments[0].blendingEnabled = true;
     pipelineDescriptor.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
@@ -104,6 +127,14 @@ static _Nullable id<MTLTexture> __circle_texture(_Nonnull id<MTLDevice> device,
     if (!(_quadTextureRenderPipeline = mss_make_render_pipeline_state(_device, pipelineDescriptor)))
         return NULL;
     
+    pipelineDescriptor.label = @"MSSVertexRenderOrbitPipelineDescriptor";
+    pipelineDescriptor.vertexFunction =
+        [_library newFunctionWithName:@"vertex_render_orbits"];
+    pipelineDescriptor.fragmentFunction =
+        [_library newFunctionWithName:@"fragment_render_texture_quad"];
+    if (!(_orbitRenderPipeline = mss_make_render_pipeline_state(_device, pipelineDescriptor)))
+        return NULL;
+    
     _renderPassDescriptor = [MTLRenderPassDescriptor new];
     MTLRenderPassColorAttachmentDescriptor *renderPassColorAttatchment =
         _renderPassDescriptor.colorAttachments[0];
@@ -111,40 +142,88 @@ static _Nullable id<MTLTexture> __circle_texture(_Nonnull id<MTLDevice> device,
     renderPassColorAttatchment.loadAction = MTLLoadActionClear;
     renderPassColorAttatchment.storeAction = MTLStoreActionStore;
     
+    _fadeTextureIndex = 0;
+    
+    for (int i = 0; i < 16; ++i) {
+        _orbits[i] = (mss_orbit) {
+            .h = (float)(random() % 8) + 2,
+            .e = 0.0625 * (float)(random() % 15),
+            .rad = 2.0 * M_PI / 16.0 * (float)(random() % 16),
+        };
+    }
+    
     return self;
 }
 
-- (nonnull id<MTLDevice>)getDevice
-{ return _device; }
+- (void)metalLayerDidResize:(CAMetalLayer *)layer
+{
+    MTLTextureDescriptor *descriptor =
+        [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
+                                                           width:layer.frame.size.width
+                                                          height:layer.frame.size.height
+                                                       mipmapped:false];
+    descriptor.usage |= MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
+    _renderDestinationTexture = [_device newTextureWithDescriptor:descriptor];
+    
+    descriptor.usage |= MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
+    _displayTexture = [_device newTextureWithDescriptor:descriptor];
+    mss_clear_texture(_device, [_commandQueue commandBuffer], _displayTexture);
+}
 
 - (void)displayMetalLayer:(CAMetalLayer *)layer
 {
-    static float r = 0;
-    
     id<CAMetalDrawable> drawable = [layer nextDrawable];
     id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
-    _renderPassDescriptor.colorAttachments[0].texture = drawable.texture;
+    
+    _renderPassDescriptor.colorAttachments[0].texture = _renderDestinationTexture;
+    _renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
+    _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0.1, 0.2, 0.3, 0);
     id<MTLRenderCommandEncoder> commandEncoder =
         [commandBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
+    [commandEncoder setRenderPipelineState:_orbitRenderPipeline];
+    
+    // float ar = layer.frame.size.height / layer.frame.size.width;
+    mss_orbit o = _orbits[2];
+    float r = ((o.h * o.h) / 16) / (1 + o.e * cos(o.rad));
+    simd_float2 p = simd_make_float2(cos(o.rad) * r, sin(o.rad) * r);
+    simd_float4x4 viewMatrix = simd_matrix(
+        simd_make_float4(1, 0, 0, -p.x),
+        simd_make_float4(0, 1, 0, -p.y),
+        simd_make_float4(0, 0, 1, 0),
+        simd_make_float4(0, 0, 0, 1));
+    [commandEncoder setVertexBytes:&viewMatrix
+                            length:sizeof(viewMatrix)
+                           atIndex:MSSBufferIndexViewMatrix];
+    [commandEncoder setFragmentTexture:_circleTexture atIndex:MSSTextureIndexIn];
+    [commandEncoder setVertexBytes:_orbits length:sizeof(_orbits) atIndex:MSSBufferIndexVertexData];
+    [commandEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:6 * 16];
+    [commandEncoder endEncoding];
+    
+    id<MTLComputeCommandEncoder> computeCommandEncoder = [commandBuffer computeCommandEncoder];
+    [computeCommandEncoder setComputePipelineState:_fadeOutComputePipeline];
+    [computeCommandEncoder setTexture:_renderDestinationTexture atIndex:MSSTextureIndexIn_0];
+    [computeCommandEncoder setTexture:_displayTexture atIndex:MSSTextureIndexIn_1];
+    [computeCommandEncoder setTexture:_displayTexture atIndex:MSSTextureIndexOut];
+    [computeCommandEncoder
+     dispatchThreadgroups:MTLSizeMake(64, 64, 1)
+     threadsPerThreadgroup:MTLSizeMake((_displayTexture.width + 64 - 1) / 64,
+                                       (_displayTexture.height + 64 - 1) / 64,
+                                       1)];
+    [computeCommandEncoder endEncoding];
+    
+    _renderPassDescriptor.colorAttachments[0].texture = drawable.texture;
+    _renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
+    _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0.1, 0.2, 0.3, 1.0);
+    commandEncoder = [commandBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
     [commandEncoder setRenderPipelineState:_quadTextureRenderPipeline];
-    
-    float ar = layer.frame.size.height / layer.frame.size.width;
-    simd_float4x4 modelMatrix = simd_matrix(
-        simd_make_float4((1.0/5.0) * ar, 0,         0, cos(r) * (4.0/5.0) * ar),
-        simd_make_float4(0,              (1.0/5.0), 0, sin(r) * (4.0/5.0)),
-        simd_make_float4(0,              0,         1, 0),
-        simd_make_float4(0,              0,         0, 1));
-    [commandEncoder setVertexBytes:&modelMatrix
-                            length:sizeof(modelMatrix)
-                           atIndex:MSSBufferIndexModelMatrix];
-    [commandEncoder setFragmentTexture:_circleTexture atIndex:0];
+    [commandEncoder setFragmentTexture:_displayTexture atIndex:MSSTextureIndexIn];
     [commandEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:6];
-    
     [commandEncoder endEncoding];
     [commandBuffer presentDrawable:drawable];
     [commandBuffer commit];
     
-    r += M_PI / 270;
+    for (int i = 0; i < 16; ++i)
+        _orbits[i].rad += M_PI / 180;
 }
 
 @end

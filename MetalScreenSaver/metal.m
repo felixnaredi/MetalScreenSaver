@@ -55,3 +55,30 @@ id<MTLTexture> mss_make_msaa_texture(_Nonnull id<MTLDevice> device,
     textureDescriptor.usage = MTLTextureUsageRenderTarget;
     return [device newTextureWithDescriptor:textureDescriptor];
 }
+
+void mss_clear_texture(id<MTLDevice> device,
+                       id<MTLCommandBuffer> commandBuffer,
+                       id<MTLTexture> texture)
+{
+    uint64 width = texture.width;
+    uint64 height = texture.height;
+    
+    // Clear texture by copy from zero value buffer.
+    uint64 bufferLength = width * height * sizeof(float) * 4;
+    id<MTLBuffer> buffer = [device newBufferWithLength:bufferLength
+                                               options:MTLResourceStorageModePrivate];
+    
+    id<MTLBlitCommandEncoder> commandEncoder = [commandBuffer blitCommandEncoder];
+    [commandEncoder fillBuffer:buffer range:NSMakeRange(0, bufferLength) value:0];
+    [commandEncoder copyFromBuffer:buffer
+                      sourceOffset:0
+                 sourceBytesPerRow:width * 4
+               sourceBytesPerImage:bufferLength
+                        sourceSize:MTLSizeMake(width, height, 1)
+                         toTexture:texture
+                  destinationSlice:0
+                  destinationLevel:0
+                 destinationOrigin:MTLOriginMake(0, 0, 0)];
+    [commandEncoder endEncoding];
+    [commandBuffer commit];
+}
