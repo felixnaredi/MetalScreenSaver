@@ -66,12 +66,17 @@ static _Nullable id<MTLTexture> __make_circle_texture(_Nonnull id<MTLDevice> dev
     id<MTLRenderPipelineState> _quadTextureRenderPipeline;
     id<MTLRenderPipelineState> _orbitRenderPipeline;
     MTLRenderPassDescriptor *_renderPassDescriptor;
+    id<MTLBuffer> _orbitBuffer;
     uint _fadeTextureIndex;
-    mss_orbit _orbits[16];
+    // uint _trackingOrbitIndex;
+    mss_orbit_vertex _orbits[kMSSOrbitCount];
 }
 
 - (nonnull id<MTLDevice>)getDevice
 { return _device; }
+
+- (nonnull mss_orbit_vertex*)getOrbitBufferContents
+{ return [_orbitBuffer contents]; }
 
 - (nullable id)init
 {
@@ -131,7 +136,7 @@ static _Nullable id<MTLTexture> __make_circle_texture(_Nonnull id<MTLDevice> dev
     pipelineDescriptor.vertexFunction =
         [_library newFunctionWithName:@"vertex_render_orbits"];
     pipelineDescriptor.fragmentFunction =
-        [_library newFunctionWithName:@"fragment_render_texture_quad"];
+        [_library newFunctionWithName:@"fragment_render_orbits"];
     if (!(_orbitRenderPipeline = mss_make_render_pipeline_state(_device, pipelineDescriptor)))
         return NULL;
     
@@ -144,11 +149,18 @@ static _Nullable id<MTLTexture> __make_circle_texture(_Nonnull id<MTLDevice> dev
     
     _fadeTextureIndex = 0;
     
-    for (int i = 0; i < 16; ++i) {
-        _orbits[i] = (mss_orbit) {
-            .h = (float)(random() % 8) + 2,
-            .e = 0.0625 * (float)(random() % 15),
-            .rad = 2.0 * M_PI / 16.0 * (float)(random() % 16),
+    _orbitBuffer = [_device newBufferWithLength:kMSSOrbitCount * sizeof(mss_orbit_vertex)
+                                        options:MTLResourceStorageModeShared];
+    mss_orbit_vertex *orbits = [self getOrbitBufferContents];
+    for (int i = 0; i < kMSSOrbitCount; ++i) {
+        orbits[i] = (mss_orbit_vertex) {
+            .h     = 0.0625 * (float)(arc4random() % 15) + 0.5,
+            .e     = 0.0625 * (float)(arc4random() % 8) + (7.0 / 16.0),
+            .rad   = (2.0 * M_PI / 16.0) * (float)(arc4random() % 16),
+            .t     = (2.0 * M_PI / 360.0) * ((float)(arc4random() % 60) + 60.0) * (1.0 / 512.0),
+            .color = simd_make_float3((float)arc4random() / (float)UINT_MAX,
+                                      (float)arc4random() / (float)UINT_MAX,
+                                      (float)arc4random() / (float)UINT_MAX),
         };
     }
     
@@ -172,7 +184,6 @@ static _Nullable id<MTLTexture> __make_circle_texture(_Nonnull id<MTLDevice> dev
 
 - (void)displayMetalLayer:(CAMetalLayer *)layer
 {
-    id<CAMetalDrawable> drawable = [layer nextDrawable];
     id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
     
     _renderPassDescriptor.colorAttachments[0].texture = _renderDestinationTexture;
@@ -183,20 +194,34 @@ static _Nullable id<MTLTexture> __make_circle_texture(_Nonnull id<MTLDevice> dev
     [commandEncoder setRenderPipelineState:_orbitRenderPipeline];
     
     // float ar = layer.frame.size.height / layer.frame.size.width;
-    mss_orbit o = _orbits[2];
-    float r = ((o.h * o.h) / 16) / (1 + o.e * cos(o.rad));
-    simd_float2 p = simd_make_float2(cos(o.rad) * r, sin(o.rad) * r);
-    simd_float4x4 viewMatrix = simd_matrix(
-        simd_make_float4(1, 0, 0, -p.x),
-        simd_make_float4(0, 1, 0, -p.y),
-        simd_make_float4(0, 0, 1, 0),
-        simd_make_float4(0, 0, 0, 1));
+    mss_orbit_vertex *orbits = [self getOrbitBufferContents];
+    simd_float2 viewport = simd_make_float2(layer.frame.size.width, layer.frame.size.height);
+    [commandEncoder setVertexBytes:&viewport length:sizeof(viewport) atIndex:MSSBufferIndexViewport];
+    mss_orbit_vertex o = orbits[0];
+    float r = ((o.h * o.h) / 0.01) / (1 + o.e * cos(o.rad));
+    simd_float2 p = simd_make_float2(r * cos(o.rad), r * sin(o.rad));
+    simd_float4x4 viewMatrix =
+    /*
+    simd_matrix(simd_make_float4(1, 0, 0, -p.x),
+                                           simd_make_float4(0, 1, 0, -p.y),
+                                           simd_make_float4(0, 0, 1, 0),
+                                           simd_make_float4(0, 0, 0, 1)); */
+        simd_mul(simd_matrix(simd_make_float4(1, 0, 0, -p.x),
+                             simd_make_float4(0, 1, 0, -p.y),
+                             simd_make_float4(0, 0, 1, 0),
+                             simd_make_float4(0, 0, 0, 1)),
+                 simd_matrix(simd_make_float4(cos(o.rad), -sin(o.rad), 0, 0),
+                             simd_make_float4(sin(o.rad), cos(o.rad), 0, 0),
+                             simd_make_float4(0, 0, 1, 0),
+                             simd_make_float4(0, 0, 0, 1)));
     [commandEncoder setVertexBytes:&viewMatrix
                             length:sizeof(viewMatrix)
                            atIndex:MSSBufferIndexViewMatrix];
+    [commandEncoder setVertexBuffer:_orbitBuffer offset:0 atIndex:MSSBufferIndexVertexData];
     [commandEncoder setFragmentTexture:_circleTexture atIndex:MSSTextureIndexIn];
-    [commandEncoder setVertexBytes:_orbits length:sizeof(_orbits) atIndex:MSSBufferIndexVertexData];
-    [commandEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:6 * 16];
+    [commandEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+                       vertexStart:6
+                       vertexCount:(kMSSOrbitCount - 1) * 6];
     [commandEncoder endEncoding];
     
     id<MTLComputeCommandEncoder> computeCommandEncoder = [commandBuffer computeCommandEncoder];
@@ -211,9 +236,18 @@ static _Nullable id<MTLTexture> __make_circle_texture(_Nonnull id<MTLDevice> dev
                                        1)];
     [computeCommandEncoder endEncoding];
     
+    id<CAMetalDrawable> drawable = [layer nextDrawable];
     _renderPassDescriptor.colorAttachments[0].texture = drawable.texture;
     _renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
-    _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0.1, 0.2, 0.3, 1.0);
+    /*
+    _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0.1,
+                                                                             0.2,
+                                                                             0.1,
+                                                                             1.00); */
+    _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(fabs(sin(o.rad)) * 0.1,
+                                                                             fabs(cos(o.rad)) * 0.1,
+                                                                             fabs(sin(o.rad)) * 0.1,
+                                                                             1.00);
     commandEncoder = [commandBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
     [commandEncoder setRenderPipelineState:_quadTextureRenderPipeline];
     [commandEncoder setFragmentTexture:_displayTexture atIndex:MSSTextureIndexIn];
@@ -222,8 +256,8 @@ static _Nullable id<MTLTexture> __make_circle_texture(_Nonnull id<MTLDevice> dev
     [commandBuffer presentDrawable:drawable];
     [commandBuffer commit];
     
-    for (int i = 0; i < 16; ++i)
-        _orbits[i].rad += M_PI / 180;
+    for (int i = 0; i < kMSSOrbitCount; ++i)
+        orbits[i].rad += orbits[i].t;
 }
 
 @end

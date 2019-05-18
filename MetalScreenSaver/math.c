@@ -10,7 +10,7 @@
 
 #define __mss_rotate(m, r) \
     simd_mul(m, simd_matrix(simd_make_float2(cos(r), -sin(r)), \
-    simd_make_float2(sin(r), cos(r))))
+                            simd_make_float2(sin(r), cos(r))))
 
 simd_float2  mss_rotate_float2(simd_float2 vector, float radian)
 { return __mss_rotate(vector, radian); }
